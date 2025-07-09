@@ -19,6 +19,11 @@ class Playlist {
     }
 
     this.playlist.push(song);
+
+      const validSongs = ["Believer", "Demons", "Radioactive", "Thunder"];
+  if (!validSongs.includes(song.title)) {
+    throw new Error("Unknown song by Imagine Dragons");
+  }
   }
 
   getSong(albumName) {
@@ -37,4 +42,4 @@ class Playlist {
   }
 }
 
-module.exports = Playlist;  // on exporte la classe directement
+module.exports = Playlist;

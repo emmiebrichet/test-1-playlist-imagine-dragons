@@ -249,7 +249,7 @@ describe("test sur la playlist avec échec", () => {
       type: "podcast",
     };
     expect(() => playlist.addSong(song))
-      .toThrow("Podcasts are not allowed");
+      .toThrow("Only song are allowed");
   });
 
   test("ajouter un film", () => {
@@ -262,4 +262,173 @@ describe("test sur la playlist avec échec", () => {
     expect(() => playlist.addSong(song))
       .toThrow("Only song are allowed");
   });
+
+  test("ajouter une chanson avec un artiste et un album inconnu", () => {
+    const invalidsong = {
+      title: "Uprising",
+      artist: "muse",
+      album: "Resistance",
+      type: "song",
+
+    }
+    expect(() => playlist.addSong(invalidsong))
+      .toThrow("Artiste et album non autorisés");
+    });
+
+    test("ajouter une chanson avec un artiste et un album inconnu (OneRepublic)", () => {
+      const invalidSong = {
+        title: "Counting Stars",
+        artist:"Onerepublic",
+        album: "Native",
+        type: "song",
+      };
+      expect(() => playlist.addSong(invalidSong))
+        .toThrow("Artiste et album non autorisés");
+    });
+    test("ajouter une chanson avec un type différent", () => {
+      const invalidType = {
+        title: "Imagine Dragons Podcast",
+        artist: "Imagine Dragons",
+        album: "Evolve",
+        type: "podcast",
+      };
+       expect(() => playlist.addSong(invalidType))
+      .toThrow("Only song are allowed");
+  });
+});
+
+
+
+
+
+describe("test sur la playlist avec de multiples chansons", () => {
+  let playlist;
+
+  beforeEach(() => {
+    playlist = new Playlist();
+  });
+
+  test("ajouter plusieurs chansons avec succès", () => {
+    const songs = [
+      {
+        title: "Demons",
+        artist: "Imagine Dragons",
+        album: "Night Visions",
+        type: "song",
+      },
+      {
+        title: "Radioactive",
+        artist: "Imagine Dragons",
+        album: "Night Visions",
+        type: "song",
+      },
+      {
+        title: "Thunder",
+        artist: "Imagine Dragons",
+        album: "Evolve",
+        type: "song",
+      },
+    ];
+
+    expect(() => {
+      songs.forEach(song => playlist.addSong(song));
+    }).not.toThrow();
+
+    expect(playlist.getPlaylist()).toEqual(
+      expect.arrayContaining(songs.map(s => expect.objectContaining(s)))
+    );
+  });
+
+  test("récupérer plusieurs chansons d'un album", () => {
+    const songs = [
+      {
+        title: "Demons",
+        artist: "Imagine Dragons",
+        album: "Night Visions",
+        type: "song",
+      },
+      {
+        title: "Radioactive",
+        artist: "Imagine Dragons",
+        album: "Night Visions",
+        type: "song",
+      },
+    ];
+
+    songs.forEach(song => playlist.addSong(song));
+
+    expect(playlist.getSong("Night Visions")).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining(songs[0]),
+        expect.objectContaining(songs[1]),
+      ])
+    );
+  });
+
+  test("supprimer plusieurs chansons de la playlist", () => {
+    const songs = [
+      {
+        title: "Demons",
+        artist: "Imagine Dragons",
+        album: "Night Visions",
+        type: "song",
+      },
+      {
+        title: "Radioactive",
+        artist: "Imagine Dragons",
+        album: "Night Visions",
+        type: "song",
+      },
+    ];
+
+    songs.forEach(song => playlist.addSong(song));
+    songs.forEach(song => playlist.removeSong(song));
+
+    expect(playlist.getPlaylist()).toEqual([]);
+  });
+
+  test("ajouter plusieurs morceaux invalides (OneRepublic) avec erreur", () => {
+    const invalidSongs = [
+      {
+        title: "Counting Stars",
+        artist: "OneRepublic",
+        album: "Native",
+        type: "song",
+      },
+      {
+        title: "I Lived",
+        artist: "OneRepublic",
+        album: "Native",
+        type: "song",
+      },
+    ];
+
+    invalidSongs.forEach(song => {
+      expect(() => playlist.addSong(song))
+        .toThrow("Artiste et album non autorisés");
+    });
+  });
+
+  test("ajouter des type différent", () => {
+  const invalidType = [
+    {
+      title: "Imagine Dragons Podcast",
+      artist: "Imagine Dragons",
+      album: "Evolve",
+      type: "podcast",
+    },
+    {
+      title: "Imagine Dragons Movie",
+      artist: "Imagine Dragons",
+      album: "Evolve",
+      type: "movie",
+    },
+  ];
+
+  invalidType.forEach(song => {
+    expect(() => playlist.addSong(song))
+      .toThrow("Only song are allowed");
+  });
+});
+
 });

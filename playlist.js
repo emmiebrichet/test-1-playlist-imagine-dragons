@@ -18,7 +18,10 @@ class Playlist {
   }
 
   if (song.type.toLowerCase() === "podcast") {
-    throw new Error("Podcasts are not allowed");
+    throw new Error("Only song are allowed");
+  }
+  if( !song.type.toLowerCase() === "movie"){
+    throw new Error("Only song are allowed");
   }
 
   if (!this.allowedTypes.includes(song.type.toLowerCase())) {

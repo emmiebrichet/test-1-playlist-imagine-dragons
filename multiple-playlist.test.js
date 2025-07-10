@@ -16,10 +16,13 @@ describe("test sur la playlist avec succès", () => {
       title: "Demons",
       artist: "Imagine Dragons",
       album: "Night Visions",
+      type: "song",
     };
 
     expect(() => playlist.addSong(song)).not.toThrow();
-    expect(playlist.getPlaylist()).toContain(song);
+    expect(playlist.getPlaylist()).toEqual(
+      expect.arrayContaining([expect.objectContaining(song)])
+    );
   });
 
   test("supprimer une chanson de la playlist", () => {
@@ -27,12 +30,15 @@ describe("test sur la playlist avec succès", () => {
       title: "Believer",
       artist: "Imagine Dragons",
       album: "Evolve",
+      type: "song",
     };
 
     playlist.addSong(song);
     playlist.removeSong(song);
 
-    expect(playlist.getPlaylist()).not.toContain(song);
+    expect(playlist.getPlaylist()).not.toEqual(
+      expect.arrayContaining([expect.objectContaining(song)])
+    );
   });
 
   test("récupérer des chansons d'un album existant", () => {
@@ -40,18 +46,41 @@ describe("test sur la playlist avec succès", () => {
       title: "Demons",
       artist: "Imagine Dragons",
       album: "Night Visions",
+      type: "song",
     };
     const song2 = {
       title: "Radioactive",
       artist: "Imagine Dragons",
       album: "Night Visions",
+      type: "song",
     };
 
     playlist.addSong(song1);
     playlist.addSong(song2);
 
-    const songs = playlist.getSong("Night Visions");
-    expect(songs).toEqual([song1, song2]);
+    // Album existant
+    expect(playlist.getSong("Night Visions")).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining(song1),
+        expect.objectContaining(song2),
+      ])
+    );
+    // Album vide
+    expect(playlist.getSong("Evolve")).toEqual([]);
+  });
+
+  test("récupérer une chanson par son titre", () => {
+    const song = {
+      title: "Thunder",
+      artist: "Imagine Dragons",
+      album: "Evolve",
+      type: "song",
+    };
+    playlist.addSong(song);
+
+    expect(playlist.getSong("Evolve")).toEqual([
+      expect.objectContaining(song),
+    ]);
   });
 });
 
@@ -62,14 +91,15 @@ describe("test sur la playlist avec échec", () => {
     playlist = new Playlist();
   });
 
-  test("ajouter une chanson invalide", () => {
+  test("ajouter une chanson invalide (artiste)", () => {
     const invalidSong = {
       title: "Demons",
       artist: "Unknown Artist",
       album: "Night Visions",
+      type: "song",
     };
-
-    expect(() => playlist.addSong(invalidSong)).toThrow("Only songs by Imagine Dragons are allowed");
+    expect(() => playlist.addSong(invalidSong))
+      .toThrow("Only songs by Imagine Dragons are allowed");
   });
 
   test("ajouter une chanson déjà présente", () => {
@@ -77,41 +107,47 @@ describe("test sur la playlist avec échec", () => {
       title: "Demons",
       artist: "Imagine Dragons",
       album: "Night Visions",
+      type: "song",
     };
-
     playlist.addSong(song);
-    expect(() => playlist.addSong(song)).toThrow("This song is already in the playlist");
+    expect(() => playlist.addSong(song))
+      .toThrow("This song is already in the playlist");
   });
 
   test("supprimer une chanson inexistante", () => {
     const song = {
-      title: "thunder",
+      title: "Thunder",
       artist: "Imagine Dragons",
       album: "Evolve",
+      type: "song",
     };
-
+    // ne doit pas planter
     expect(() => playlist.removeSong(song)).not.toThrow();
-    expect(playlist.getPlaylist()).not.toContain(song);
+    expect(playlist.getPlaylist()).not.toEqual(
+      expect.arrayContaining([expect.objectContaining(song)])
+    );
   });
 
   test("récupérer des chansons d'un album inexistant", () => {
-    const songs = playlist.getSong("Nonexistent Album");
-    expect(songs).toEqual([]);
+    expect(playlist.getSong("Nonexistent Album")).toEqual([]);
   });
 
   test("ajouter une chanson de OneRepublic", () => {
     const song = {
       title: "Counting Stars",
       artist: "OneRepublic",
-      album: "Native",
+      album: "Evolve",
+      type: "song",
     };
-    expect(() => playlist.addSong(song)).toThrow("Only songs by Imagine Dragons are allowed");
+    expect(() => playlist.addSong(song))
+      .toThrow("Only songs by Imagine Dragons are allowed");
   });
 
   test("ajouter une chanson sans titre", () => {
     const song = {
       artist: "Imagine Dragons",
       album: "Night Visions",
+      type: "song",
     };
     expect(() => playlist.addSong(song)).toThrow("Invalid song object");
   });
@@ -120,6 +156,7 @@ describe("test sur la playlist avec échec", () => {
     const song = {
       title: "Demons",
       album: "Night Visions",
+      type: "song",
     };
     expect(() => playlist.addSong(song)).toThrow("Invalid song object");
   });
@@ -128,6 +165,7 @@ describe("test sur la playlist avec échec", () => {
     const song = {
       title: "Demons",
       artist: "Imagine Dragons",
+      type: "song",
     };
     expect(() => playlist.addSong(song)).toThrow("Invalid song object");
   });
@@ -137,6 +175,7 @@ describe("test sur la playlist avec échec", () => {
       title: "",
       artist: "Imagine Dragons",
       album: "Night Visions",
+      type: "song",
     };
     expect(() => playlist.addSong(song)).toThrow("Invalid song object");
   });
@@ -146,6 +185,7 @@ describe("test sur la playlist avec échec", () => {
       title: "Demons",
       artist: "",
       album: "Night Visions",
+      type: "song",
     };
     expect(() => playlist.addSong(song)).toThrow("Invalid song object");
   });
@@ -155,6 +195,7 @@ describe("test sur la playlist avec échec", () => {
       title: "Demons",
       artist: "Imagine Dragons",
       album: "",
+      type: "song",
     };
     expect(() => playlist.addSong(song)).toThrow("Invalid song object");
   });
@@ -164,6 +205,7 @@ describe("test sur la playlist avec échec", () => {
       title: null,
       artist: "Imagine Dragons",
       album: "Night Visions",
+      type: "song",
     };
     expect(() => playlist.addSong(song)).toThrow("Invalid song object");
   });
@@ -173,6 +215,7 @@ describe("test sur la playlist avec échec", () => {
       title: "Demons",
       artist: null,
       album: "Night Visions",
+      type: "song",
     };
     expect(() => playlist.addSong(song)).toThrow("Invalid song object");
   });
@@ -182,16 +225,41 @@ describe("test sur la playlist avec échec", () => {
       title: "Demons",
       artist: "Imagine Dragons",
       album: null,
+      type: "song",
     };
     expect(() => playlist.addSong(song)).toThrow("Invalid song object");
   });
-  test("ajouter une chanson avec un titre inconnu", () => {
-  const song = {
-    title: "stella",
-    artist: "Imagine Dragons",
-    album: "Evolve",
-  };
-  expect(() => playlist.addSong(song)).toThrow("Unknown song by Imagine Dragons");
-});
-});
 
+  test("ajouter une chanson avec un titre inconnu", () => {
+    const song = {
+      title: "stella",
+      artist: "Imagine Dragons",
+      album: "Evolve",
+      type: "song",
+    };
+    expect(() => playlist.addSong(song))
+      .toThrow("Unknown song by Imagine Dragons");
+  });
+
+  test("ajouter une chanson avec un type podcast", () => {
+    const song = {
+      title: "Podcast Episode",
+      artist: "Imagine Dragons",
+      album: "Evolve",
+      type: "podcast",
+    };
+    expect(() => playlist.addSong(song))
+      .toThrow("Podcasts are not allowed");
+  });
+
+  test("ajouter un film", () => {
+    const song = {
+      title: "Imagine Dragons Movie",
+      artist: "Imagine Dragons",
+      album: "Evolve",
+      type: "movie",
+    };
+    expect(() => playlist.addSong(song))
+      .toThrow("Only song are allowed");
+  });
+});

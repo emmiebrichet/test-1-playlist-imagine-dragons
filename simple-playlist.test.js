@@ -7,7 +7,8 @@ test("ajouter une chanson sans erreur", () => {
     const song = {
         title: "Demons",
         artist: "Imagine Dragons",
-        album: "Night Vision"
+        album: "Night Visions",
+        type: "song",
     };  
     
     expect(() => playlist.addSong(song)).not.toThrow();
